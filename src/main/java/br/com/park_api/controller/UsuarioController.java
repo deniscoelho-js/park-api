@@ -86,9 +86,9 @@ public class UsuarioController {
             }
     )
     @PutMapping("/alterarsenha/{id}")
-    public ResponseEntity<UsuarioResponseDto> alterarSenha(@PathVariable Long id, @Valid  @RequestBody AlterarSenhaRequestDto dto){
+    public ResponseEntity<Void> alterarSenha(@PathVariable Long id, @Valid  @RequestBody AlterarSenhaRequestDto dto){
         Usuario user = usuarioService.alterarSenha(id, dto.getSenhaAtual(), dto.getNovaSenha(), dto.getConfirmaSenha());
-        return ResponseEntity.ok(UsuarioMapper.toUsuarioResponseDto(user));
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Recuperar todos os usuários", description = "Recuperar todos os usuários",
