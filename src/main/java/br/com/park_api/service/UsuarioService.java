@@ -2,6 +2,7 @@ package br.com.park_api.service;
 
 import br.com.park_api.entity.Usuario;
 import br.com.park_api.exception.EntityNotFoundException;
+import br.com.park_api.exception.PasswordInvalidException;
 import br.com.park_api.exception.UserEmailUniqueViolationException;
 import br.com.park_api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,13 +48,13 @@ public class UsuarioService {
     @Transactional
     public Usuario alterarSenha(Long id, String senhaAtual, String novaSenha, String confirmaSenha){
         if(!novaSenha.equals(confirmaSenha)){
-            throw new RuntimeException("Nova senha não confere com confirmação de senha");
+            throw new PasswordInvalidException("Nova senha não confere com confirmação de senha");
         }
 
         Usuario user = buscarPorId(id);
 
         if(!user.getPassword().equals(senhaAtual)){
-            throw new RuntimeException("Sua senha não confere.");
+            throw new PasswordInvalidException("Sua senha não confere.");
         }
 
         user.setPassword(novaSenha);

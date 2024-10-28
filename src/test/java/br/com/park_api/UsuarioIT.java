@@ -216,4 +216,88 @@ public class UsuarioIT {
                 .expectStatus().isNoContent();
     }
 
+    @Test
+    public void alterarSenha_ComIdInexistente_DeveRetornarStatus404() {
+
+        ErrorMessage responseDto = webTestClient
+                .put()
+                .uri("/api/v1/usuarios/alterarsenha/0")
+                .bodyValue(new AlterarSenhaRequestDto("123456", "763757", "763757"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    public void alterarSenha_ComCamposInvalidos_DeveRetornarStatus422() {
+
+        ErrorMessage responseDto = webTestClient
+                .put()
+                .uri("/api/v1/usuarios/alterarsenha/100")
+                .bodyValue(new AlterarSenhaRequestDto("123", "123", "123"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+
+         webTestClient
+                .put()
+                .uri("/api/v1/usuarios/alterarsenha/100")
+                .bodyValue(new AlterarSenhaRequestDto("1234", "1234", "1234"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+//
+         webTestClient
+                .put()
+                .uri("/api/v1/usuarios/alterarsenha/100")
+                .bodyValue(new AlterarSenhaRequestDto("1234567", "1234567", "1234567"))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getStatus()).isEqualTo(422);
+    }
+
+    @Test
+    public void alterarSenha_ComCamposInvalidos_DeveRetornarStatus400() {
+
+        ErrorMessage responseDto = webTestClient
+                .put()
+                .uri("/api/v1/usuarios/alterarsenha/100")
+                .bodyValue(new AlterarSenhaRequestDto("123456", "123456", "000000"))
+                .exchange()
+                .expectStatus().isEqualTo(400)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
+
+        webTestClient
+                .put()
+                .uri("/api/v1/usuarios/alterarsenha/100")
+                .bodyValue(new AlterarSenhaRequestDto("000000", "123456", "123456"))
+                .exchange()
+                .expectStatus().isEqualTo(400)
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseDto).isNotNull();
+        Assertions.assertThat(responseDto.getStatus()).isEqualTo(400);
+
+    }
 }
