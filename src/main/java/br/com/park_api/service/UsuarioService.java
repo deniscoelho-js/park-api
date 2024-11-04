@@ -7,6 +7,7 @@ import br.com.park_api.exception.UserEmailUniqueViolationException;
 import br.com.park_api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,11 +17,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UsuarioService {
 
+    private final PasswordEncoder passwordEncoder;
+
     private final UsuarioRepository usuarioRepository;
 
     @Transactional
     public Usuario salvar(Usuario usuario){
         try {
+            usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
             return usuarioRepository.save(usuario);
         } catch (DataIntegrityViolationException exception){
             throw new UserEmailUniqueViolationException(String.format("Usuário '%s' já cadastrado", usuario.getEmail()));
@@ -66,10 +70,19 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
+    public Usuario buscarPorEmail(String email){
+        return usuarioRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(String.format("Usuário com id: '%s' não encontrado", email)));
+    }
+
     @Transactional
     public void deletarUsuario(Long id){
         Usuario user = usuarioRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado com id: " + id));
          usuarioRepository.deleteById(id);
     }
 
+    @Transactional
+    public Usuario.Role buscarRolePorEmail(String email) {
+        return usuarioRepository.findRoleByEmail(email);
+    }
 }
