@@ -29,7 +29,6 @@ public class UsuarioService {
         } catch (DataIntegrityViolationException exception){
             throw new UserEmailUniqueViolationException(String.format("Usuário '%s' já cadastrado", usuario.getEmail()));
         }
-
     }
 
     @Transactional(readOnly = true)
@@ -56,13 +55,13 @@ public class UsuarioService {
         }
 
         Usuario user = buscarPorId(id);
-
-        if(!user.getPassword().equals(senhaAtual)){
+        if(!passwordEncoder.matches(senhaAtual, user.getPassword())){
             throw new PasswordInvalidException("Sua senha não confere.");
         }
 
-        user.setPassword(novaSenha);
+        user.setPassword(passwordEncoder.encode(novaSenha));
         return usuarioRepository.save(user);
+//        return user;
     }
 
     @Transactional(readOnly = true)
