@@ -40,8 +40,12 @@ public class UsuarioService {
     public Usuario alterarEmail(Long id, String novoEmail , String confirmaSenha){
         Usuario user = buscarPorId(id);
 
-        if(!confirmaSenha.equals(user.getPassword())){
-            throw new RuntimeException("Sua senha não confere.");
+//        if(!confirmaSenha.equals(user.getPassword())){
+//            throw new RuntimeException("Sua senha não confere.");
+//        }
+
+        if(!passwordEncoder.matches(confirmaSenha, user.getPassword())){
+            throw new PasswordInvalidException("Sua senha não confere.");
         }
 
         user.setEmail(novoEmail);
