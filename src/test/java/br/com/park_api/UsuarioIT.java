@@ -19,7 +19,6 @@ import org.springframework.web.reactive.function.client.ExchangeStrategies;
 @Sql(scripts = "/sql/usuarios/usuario-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class UsuarioIT {
 
-
     @Autowired
     WebTestClient webTestClient;
 
